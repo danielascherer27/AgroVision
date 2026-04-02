@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="4">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroVision AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-badge">AG</div>
+                <div>
+                    <h1>AgroVision AI</h1>
+                    <p>Monitoramento inteligente</p>
+                </div>
+            </div>
+
+            <nav class="side-info">
+                <div class="side-card">
+                    <span class="side-label">Status</span>
+                    <strong class="online">Sistema online</strong>
+                </div>
+
+                <div class="side-card">
+                    <span class="side-label">Atualização</span>
+                    <strong>A cada 4 segundos</strong>
+                </div>
+
+                <div class="side-card">
+                    <span class="side-label">Eventos carregados</span>
+                    <strong>{{ events|length }}</strong>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="hero">
+                <div>
+                    <p class="eyebrow">Painel operacional</p>
+                    <h2>Central de detecção em tempo real</h2>
+                    <p class="hero-text">
+                        Visualize a câmera ao vivo, acompanhe evidências registradas e monitore rapidamente os eventos detectados pelo modelo.
+                    </p>
+                </div>
+
+                <div class="hero-actions">
+                    <div class="status-pill">
+                        <span class="pulse"></span>
+                        Em execução
+                    </div>
+                </div>
+            </header>
+
+            <section class="metrics">
+                <div class="metric-card">
+                    <span class="metric-title">Eventos visíveis</span>
+                    <strong class="metric-value">{{ events|length }}</strong>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-title">Fonte</span>
+                    <strong class="metric-value small">Câmera / YOLO</strong>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-title">Modo</span>
+                    <strong class="metric-value small">Detecção ativa</strong>
+                </div>
+            </section>
+
+            <section class="content-grid">
+                <section class="panel live-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">Vídeo</p>
+                            <h3>Monitoramento ao vivo</h3>
+                        </div>
+                        <span class="panel-chip">Frame atual</span>
+                    </div>
+
+                    <div class="live-stage">
+                        <img src="/frame" alt="Frame da câmera">
+                    </div>
+                </section>
+
+                <section class="panel events-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="panel-kicker">Histórico</p>
+                            <h3>Últimos eventos</h3>
+                        </div>
+                        <span class="panel-chip">{{ events|length }} itens</span>
+                    </div>
+
+                    {% if events %}
+                        <div class="events-list">
+                            {% for event in events %}
+                                <article class="event-item">
+                                    <div class="event-head">
+                                        <div>
+                                            <h4>{{ event.label|capitalize }}</h4>
+                                            <p class="event-id">ID {{ event.id }}</p>
+                                        </div>
+                                        <div class="confidence-box">
+                                            {{ '%.2f'|format(event.confidence) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="event-meta">
+                                        <div class="meta-row">
+                                            <span class="meta-label">Data/Hora</span>
+                                            <span class="meta-value">{{ event.event_time }}</span>
+                                        </div>
+                                        <div class="meta-row">
+                                            <span class="meta-label">Classe</span>
+                                            <span class="meta-value">{{ event.label }}</span>
+                                        </div>
+                                    </div>
+
+                                    {% if event.image_path %}
+                                        <div class="event-thumb">
+                                            <img src="{{ event.image_path }}" alt="Evidência da detecção">
+                                        </div>
+                                    {% endif %}
+                                </article>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-box">
+                            <div class="empty-icon">○</div>
+                            <p>Nenhum evento detectado até o momento.</p>
+                        </div>
+                    {% endif %}
+                </section>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
